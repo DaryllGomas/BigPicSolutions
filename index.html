@@ -874,10 +874,25 @@
         <h2 class="section-title">Ready to Experience the Future?</h2>
         <div class="contact-content">
             <p>Don't settle for traditional tech support. Get the power of human expertise enhanced by AI.</p>
-            <form class="contact-form">
-                <input type="text" class="form-input" placeholder="Your Name" required>
-                <input type="email" class="form-input" placeholder="Your Email" required>
-                <textarea class="form-input" placeholder="Tell us about your tech challenge" rows="4" required></textarea>
+            <form class="contact-form" action="https://formsubmit.co/daryll.gomas@gmail.com" method="POST">
+                <!-- 
+                SETUP INSTRUCTIONS:
+                1. Replace YOUR_EMAIL_HERE with your actual email address
+                2. Deploy to GitHub Pages
+                3. Submit the form once to activate your email (FormSubmit will send you a confirmation)
+                4. That's it! No sign-up or API keys needed
+                
+                Example: action="https://formsubmit.co/john@bigpicsolutions.com"
+                -->
+                
+                <!-- FormSubmit Configuration -->
+                <input type="hidden" name="_subject" value="New contact from Big Pic Solutions website!">
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_next" value="https://bigpicsolutions.com/thanks.html">
+                
+                <input type="text" name="name" class="form-input" placeholder="Your Name" required>
+                <input type="email" name="email" class="form-input" placeholder="Your Email" required>
+                <textarea name="message" class="form-input" placeholder="Tell us about your tech challenge" rows="4" required></textarea>
                 <button type="submit" class="cta-button">Get Started</button>
             </form>
         </div>
@@ -1014,13 +1029,6 @@
 
         document.querySelectorAll('.fade-in').forEach(el => {
             observer.observe(el);
-        });
-
-        // Form submission
-        document.querySelector('.contact-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Thank you for your interest! We\'ll be in touch soon to discuss how we can help with your technology needs.');
-            e.target.reset();
         });
     </script>
 </body>

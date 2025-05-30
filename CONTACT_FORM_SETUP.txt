@@ -1,0 +1,25 @@
+# ⚡ Quick Contact Form Setup
+
+Just **ONE THING** to make your contact form work:
+
+## 1. Replace Email in index.html
+
+Open `index.html` and find this line (around line 875):
+```html
+<form class="contact-form" action="https://formsubmit.co/YOUR_EMAIL_HERE" method="POST">
+```
+
+Change `YOUR_EMAIL_HERE` to your actual email address. For example:
+```html
+<form class="contact-form" action="https://formsubmit.co/john@bigpicsolutions.com" method="POST">
+```
+
+## 2. That's it! 
+
+- Push your changes to GitHub
+- Visit your site
+- Submit the form once to activate (FormSubmit will email you)
+- Click their activation link
+- Done! ✅
+
+Your contact form will now send emails directly to you, with a nice thank you page after submission.
