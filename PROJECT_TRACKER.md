@@ -41,6 +41,9 @@ Creating a cutting-edge website for Big Pic Solutions - an AI-powered technology
 ## File Structure
 ```
 BigPicSolutions/
+├── assets/
+│   └── images/
+│       └── AppleCert.png (Apple certification badge)
 ├── PROJECT_TRACKER.md (this file)
 ├── index.html (main website)
 ├── thanks.html (thank you page)
@@ -62,6 +65,7 @@ BigPicSolutions/
 - **Fixed Navigation**: Sticky nav with scroll-based styling
 - **Form Validation**: Contact form with client-side validation
 - **Performance Optimized**: Efficient animations using requestAnimationFrame
+- **Apple Certification**: Prominently displayed professional certification
 
 ## Updates Log
 - **2024-01-XX**: Project initialized, documentation created
@@ -91,3 +95,15 @@ BigPicSolutions/
   - Created GITHUB_PAGES_SETUP.md deployment guide
   - Removed 100% satisfaction stat for authenticity
   - Updated README with complete documentation
+- **2024-01-XX**: Apple Certified Support Professional integration
+  - Added AppleCert.png to project root
+  - Created Professional Certifications section in About area
+  - Updated expertise list to highlight Apple certification
+  - Added dedicated "Apple Certified Excellence" service card
+  - Integrated certification badge in footer with hover effects
+  - Enhanced credibility throughout the site
+- **2024-01-XX**: Asset organization and folder structure
+  - Created proper assets/images folder structure
+  - Moved AppleCert.png to assets/images/
+  - Updated all image references in HTML to use new path
+  - Updated documentation to reflect new structure
