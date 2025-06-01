@@ -14,7 +14,8 @@ Big Pic Solutions is a cutting-edge technology support company that combines dec
 - **Interactive Elements**: Hover effects, glowing gradients, and transitions
 - **Clear Messaging**: Emphasizes the unique human + AI synergy
 - **Comprehensive About Section**: Showcases 25+ years of expertise with AI enhancement
-- **Detailed Services**: 6 specific service offerings based on real experience
+- **Professional Certifications**: Prominently displays Apple Certified Support Professional status
+- **Detailed Services**: 7 specific service offerings including Apple-focused support
 - **Technology Stack Display**: 16 technology badges showing expertise
 - **Client Success Stories**: Real-world wins with measurable impact
 - **Floating Animations**: Icons that float for added visual interest
@@ -40,11 +41,15 @@ Big Pic Solutions is a cutting-edge technology support company that combines dec
 
 ```
 BigPicSolutions/
+├── assets/
+│   └── images/
+│       └── AppleCert.png    # Apple certification badge
 ├── index.html              # Main website file
 ├── thanks.html            # Thank you page after form submission
 ├── PROJECT_TRACKER.md     # Development tracking and notes
 ├── README.md             # This file
 ├── GITHUB_PAGES_SETUP.md # Deployment instructions
+├── CONTACT_FORM_SETUP.txt# Quick form setup guide
 ├── open-website.bat      # Quick launcher for the website
 └── dev-environment.bat   # Opens both website and folder
 ```
@@ -53,7 +58,10 @@ BigPicSolutions/
 
 1. **Hero** - Eye-catching intro with AI animation
 2. **About** - Detailed expertise showcase (Human + AI)
-3. **Services** - 6 specific service offerings
+   - Professional Certifications display
+   - Technology stack badges
+3. **Services** - 7 specific service offerings
+   - Including dedicated Apple Certified Excellence
 4. **Our Approach** - Visual representation of Human + AI synergy
 5. **Client Wins** - Real success stories with impact metrics
 6. **Contact** - Working contact form with email delivery

@@ -503,6 +503,78 @@
             box-shadow: 0 5px 15px rgba(0, 212, 255, 0.3);
         }
 
+        /* Certifications */
+        .certifications {
+            margin-top: 4rem;
+            text-align: center;
+        }
+
+        .certifications h3 {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: var(--primary);
+        }
+
+        .cert-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            transition: all 0.3s ease;
+        }
+
+        .cert-container:hover {
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .cert-badge {
+            width: 120px;
+            height: auto;
+            filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5));
+            transition: all 0.3s ease;
+        }
+
+        .cert-container:hover .cert-badge {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 30px rgba(0, 212, 255, 0.7));
+        }
+
+        .cert-info {
+            text-align: left;
+            flex: 1;
+            max-width: 500px;
+        }
+
+        .cert-info h4 {
+            font-size: 1.3rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .cert-info p {
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 768px) {
+            .cert-container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .cert-info {
+                text-align: center;
+            }
+        }
+
         /* Client Wins Section */
         .client-wins {
             padding: 5rem 5%;
@@ -627,6 +699,38 @@
             text-align: center;
             padding: 2rem;
             opacity: 0.7;
+            background: rgba(0, 0, 0, 0.5);
+            margin-top: 4rem;
+        }
+        
+        .footer-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .footer-cert {
+            margin-bottom: 1rem;
+        }
+        
+        .footer-cert-badge {
+            width: 60px;
+            height: auto;
+            opacity: 0.8;
+            filter: drop-shadow(0 0 10px rgba(0, 212, 255, 0.3));
+            transition: all 0.3s ease;
+        }
+        
+        .footer-cert-badge:hover {
+            opacity: 1;
+            transform: scale(1.1);
+            filter: drop-shadow(0 0 20px rgba(0, 212, 255, 0.5));
+        }
+        
+        .footer-tagline {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            color: var(--primary);
+            opacity: 0.9;
         }
 
         /* Mobile Responsive */
@@ -714,6 +818,7 @@
                 <div class="expertise-icon">🧠</div>
                 <h3>Human Expertise</h3>
                 <ul>
+                    <li><strong>Apple Certified Support Professional</strong> - Official Apple certification for advanced troubleshooting</li>
                     <li>Former IT lead for companies leveraging <strong>Apple, Windows, Unifi, Synology, SonicWall, and Microsoft 365</strong></li>
                     <li>Deep experience across <strong>network infrastructure</strong>, <strong>domain administration</strong>, <strong>virtualization (Hyper-V)</strong>, and <strong>cybersecurity</strong></li>
                     <li>Specialized in <strong>MSP workflows</strong>, automation via Halo PSA, NinjaOne, Addigy</li>
@@ -766,6 +871,18 @@
                 <span class="tech-badge">VPN</span>
             </div>
         </div>
+        
+        <!-- Certifications -->
+        <div class="certifications">
+            <h3>Professional Certifications</h3>
+            <div class="cert-container">
+                <img src="assets/images/AppleCert.png" alt="Apple Certified Support Professional" class="cert-badge">
+                <div class="cert-info">
+                    <h4>Apple Certified Support Professional</h4>
+                    <p>Official Apple certification demonstrating advanced proficiency in macOS troubleshooting, hardware diagnostics, and Apple ecosystem integration.</p>
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- Services Section -->
@@ -793,9 +910,14 @@
                 <p>Stop doing repetitive tasks manually. We build custom tools for asset tracking, calendar automation, IT compliance, and workflow optimization using Python and AI.</p>
             </div>
             <div class="service-card">
+                <div class="service-icon">🍏</div>
+                <h3 class="service-title">Apple Certified Excellence</h3>
+                <p>As an Apple Certified Support Professional, we provide expert Mac support beyond the basics. From enterprise deployment to advanced troubleshooting, we speak fluent Apple.</p>
+            </div>
+            <div class="service-card">
                 <div class="service-icon">🖥️</div>
-                <h3 class="service-title">Cross-Platform Excellence</h3>
-                <p>Mac, Windows, Linux - we speak all languages. Specializing in complex mixed environments, virtualization (Hyper-V), and seamless integration across all platforms.</p>
+                <h3 class="service-title">Cross-Platform Integration</h3>
+                <p>Mac, Windows, Linux - we connect them all. Specializing in complex mixed environments, virtualization (Hyper-V), and seamless integration across all platforms.</p>
             </div>
             <div class="service-card">
                 <div class="service-icon">🚀</div>
@@ -900,7 +1022,13 @@
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2009 Big Pic Solutions. Powered by Human Intelligence + AI</p>
+        <div class="footer-content">
+            <div class="footer-cert">
+                <img src="assets/images/AppleCert.png" alt="Apple Certified Support Professional" class="footer-cert-badge">
+            </div>
+            <p>&copy; 2024 Big Pic Solutions. Powered by Human Intelligence + AI</p>
+            <p class="footer-tagline">Apple Certified Support Professional | 25+ Years Experience</p>
+        </div>
     </footer>
 
     <script>
