@@ -575,6 +575,99 @@
             }
         }
 
+        /* Efficiency Audit Section */
+        .efficiency-audit {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            padding: 4rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .efficiency-content {
+            text-align: center;
+        }
+
+        .problem-statement {
+            margin-bottom: 3rem;
+        }
+
+        .problem-statement h3 {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .efficiency-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .efficiency-card {
+            background: rgba(10, 10, 10, 0.8);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 15px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .efficiency-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 0, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .efficiency-card:hover::before {
+            opacity: 1;
+        }
+
+        .efficiency-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--secondary);
+            box-shadow: 0 15px 40px rgba(255, 0, 255, 0.2);
+        }
+
+        .efficiency-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: inline-block;
+        }
+
+        .efficiency-card h3 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+        }
+
+        .efficiency-cta {
+            margin-top: 3rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 15px;
+            border: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        .efficiency-cta h3 {
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .efficiency-cta p {
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
         /* Client Wins Section */
         .client-wins {
             padding: 5rem 5%;
@@ -778,6 +871,7 @@
                 <li><a href="#home">Home</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#services">Services</a></li>
+                <li><a href="#efficiency">Efficiency</a></li>
                 <li><a href="#synergy">My Approach</a></li>
                 <li><a href="#wins">Client Wins</a></li>
                 <li><a href="#contact">Contact Me</a></li>
@@ -841,7 +935,7 @@
                 <div class="expertise-icon">🛠</div>
                 <h3>What Sets Me Apart</h3>
                 <ul>
-                    <li>We <strong>don't just follow scripts</strong> — I solve undocumented, high-level problems</li>
+                    <li>I <strong>don't just follow scripts</strong> — I solve undocumented, high-level problems</li>
                     <li>Build <strong>custom automation</strong> and integrate services like M365 + Synology</li>
                     <li>Support <strong>ethical tech choices</strong> with deep security knowledge</li>
                     <li>Reduce overhead while enhancing security and performance</li>
@@ -888,6 +982,11 @@
         <h2 class="section-title">My Services</h2>
         <div class="services-grid">
             <div class="service-card">
+                <div class="service-icon">💰</div>
+                <h3 class="service-title">Business Efficiency Audit</h3>
+                <p>Stop paying for software bloat. I use AI-powered analysis to identify redundant tools, eliminate license waste, and streamline your technology stack. Your business should profit from technology, not feed vendor revenue streams.</p>
+            </div>
+            <div class="service-card">
                 <div class="service-icon">🔒</div>
                 <h3 class="service-title">Cybersecurity & Recovery</h3>
                 <p>Ransomware recovery specialist. I've rescued and restored company data, rebuilt cloud infrastructure, and implemented bulletproof security protocols. Your data's safety is my priority.</p>
@@ -921,6 +1020,47 @@
                 <div class="service-icon">🚀</div>
                 <h3 class="service-title">MSP & Enterprise Tools</h3>
                 <p>Proficiency in Halo PSA, NinjaOne, Addigy, and enterprise monitoring. I can help you optimize your existing tools or in choosing and implement the right stack.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stop the Software Bloat Section -->
+    <section class="efficiency-audit fade-in" id="efficiency">
+        <h2 class="section-title">Stop the Software Bloat</h2>
+        <div class="efficiency-content">
+            <div class="problem-statement">
+                <h3>The Hidden Cost of IT Complexity</h3>
+                <p class="section-description">
+                    In today's market, <strong>software bloat has become a business model</strong>. Vendors profit from complexity, 
+                    not efficiency. Are you paying for tools that monitor your monitoring tools? Drowning in overlapping 
+                    licenses? Feeding vendor revenue streams instead of growing your business?
+                </p>
+            </div>
+            
+            <div class="efficiency-grid">
+                <div class="efficiency-card">
+                    <div class="efficiency-icon">📊</div>
+                    <h3>AI-Powered Analysis</h3>
+                    <p>I use advanced AI tools to audit your entire technology stack, identifying redundancies, unused licenses, and opportunities for consolidation.</p>
+                </div>
+                
+                <div class="efficiency-card">
+                    <div class="efficiency-icon">🎯</div>
+                    <h3>Vendor-Agnostic Approach</h3>
+                    <p>With 25 years of experience, I know what actually works vs. what just sells. I'm not here to add more tools—I'm here to eliminate unnecessary ones.</p>
+                </div>
+                
+                <div class="efficiency-card">
+                    <div class="efficiency-icon">💵</div>
+                    <h3>Measurable Savings</h3>
+                    <p>Typical clients see 30-60% reduction in software costs while improving operational efficiency. Technology should reduce expenses, not create them.</p>
+                </div>
+            </div>
+            
+            <div class="efficiency-cta">
+                <h3>Ready to Stop the Bleeding?</h3>
+                <p>Let me analyze your current setup and show you exactly where your budget is being wasted.</p>
+                <a href="#contact" class="cta-button">Get Free Efficiency Assessment</a>
             </div>
         </div>
     </section>
@@ -961,6 +1101,10 @@
                 <div class="stat-number">24/7</div>
                 <div class="stat-label">AI Assistance</div>
             </div>
+            <div class="stat-item">
+                <div class="stat-number">40%</div>
+                <div class="stat-label">Average Cost Reduction</div>
+            </div>
         </div>
     </section>
 
@@ -976,9 +1120,9 @@
             </div>
             <div class="win-card">
                 <div class="win-icon">💰</div>
-                <h3>Cross-Platform Cost Saver</h3>
-                <p class="win-description">Built innovative solutions using macOS, Hyper-V, VMware and more that focus on cost savings, instead of tribalistic adherence. I do not believe in the "you have to use this" mentality. I believe in the "you have to use what's best for you" mentality.</p>
-                <div class="win-impact">Exponential Cost Reduction • Exponential Performance Boost</div>
+                <h3>Software Bloat Elimination</h3>
+                <p class="win-description">Audited a growing company's technology stack and discovered they were paying for 7 different monitoring tools that overlapped functions. Consolidated to 2 essential platforms while improving visibility and reducing operational complexity.</p>
+                <div class="win-impact">$47K Annual Savings • 65% License Reduction • Simpler Operations</div>
             </div>
             <div class="win-card">
                 <div class="win-icon">⏱️</div>
