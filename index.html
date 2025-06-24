@@ -11,6 +11,117 @@
             box-sizing: border-box;
         }
 
+        /* Launch Countdown Banner */
+        .launch-banner {
+            position: fixed;
+            top: 0; /* Back to very top of screen */
+            left: 0;
+            width: 100%;
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.95) 0%, rgba(139, 69, 255, 0.95) 100%);
+            backdrop-filter: blur(10px);
+            z-index: 2000; /* Above navigation */
+            padding: 3px 0; /* 20% thinner - was 4px */
+            text-align: center;
+            box-shadow: 0 2px 20px rgba(0, 212, 255, 0.3);
+        }
+
+        .launch-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem; /* Horizontal spacing between timer and text */
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .launch-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+            font-size: 0.8rem;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .countdown-timer {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .time-unit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 40px;
+        }
+
+        .time-number {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+            animation: countdownPulse 2s ease-in-out infinite;
+        }
+
+        .time-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .time-separator {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 700;
+            animation: separatorBlink 1s ease-in-out infinite alternate;
+        }
+
+        /* Animations */
+        @keyframes countdownPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes separatorBlink {
+            0% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+        /* Adjust body padding to account for banner + nav */
+        body {
+            padding-top: 92px; /* 32px thinner banner + 60px nav */
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .launch-content {
+                flex-direction: column;
+                gap: 0.2rem;
+            }
+            
+            .launch-text {
+                font-size: 0.7rem;
+            }
+            
+            .countdown-timer {
+                gap: 0.3rem;
+            }
+            
+            .time-number {
+                font-size: 0.9rem;
+            }
+            
+            .time-label {
+                font-size: 0.6rem;
+            }
+            
+            body {
+                padding-top: 107px; /* Adjusted for thinner banner on mobile */
+            }
+        }
+
         :root {
             --primary: #00d4ff;
             --secondary: #ff00ff;
@@ -42,18 +153,12 @@
         /* Navigation */
         nav {
             position: fixed;
-            top: 0;
+            top: 32px;
             width: 100%;
             padding: 1rem 5%;
             background: rgba(10, 10, 10, 0.8);
             backdrop-filter: blur(10px);
             z-index: 1000;
-            transition: all 0.3s ease;
-        }
-
-        nav.scrolled {
-            padding: 0.5rem 5%;
-            background: rgba(10, 10, 10, 0.95);
         }
 
         .nav-container {
@@ -103,6 +208,110 @@
         }
 
         .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Mobile Menu Button */
+        .mobile-menu-btn {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 40px;
+            height: 40px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            z-index: 1001;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger-line {
+            width: 24px;
+            height: 2px;
+            background: var(--light);
+            transition: all 0.3s ease;
+            margin: 2px 0;
+        }
+
+        .mobile-menu-btn.active .hamburger-line:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .mobile-menu-btn.active .hamburger-line:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-menu-btn.active .hamburger-line:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -6px);
+        }
+
+        /* Mobile Navigation Menu */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: rgba(10, 10, 10, 0.98);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            padding-top: 80px;
+            transform: translateX(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .mobile-nav.active {
+            transform: translateX(0);
+        }
+
+        .mobile-nav-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            padding-top: 2rem;
+        }
+
+        .mobile-nav-link {
+            color: var(--light);
+            text-decoration: none;
+            font-size: 1.5rem;
+            font-weight: 500;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+            min-height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 200px;
+        }
+
+        .mobile-nav-link:hover {
+            background: rgba(0, 212, 255, 0.1);
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .mobile-nav-link::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .mobile-nav-link:hover::before {
             width: 100%;
         }
 
@@ -828,8 +1037,19 @@
 
         /* Mobile Responsive */
         @media (max-width: 768px) {
+            /* Hide desktop navigation */
             .nav-links {
                 display: none;
+            }
+            
+            /* Show mobile menu button */
+            .mobile-menu-btn {
+                display: flex;
+            }
+            
+            /* Show mobile navigation when active */
+            .mobile-nav {
+                display: block;
             }
             
             .hero h1 {
@@ -843,6 +1063,11 @@
             
             .services-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            /* Ensure mobile nav is above other content */
+            body.mobile-nav-open {
+                overflow: hidden;
             }
         }
 
@@ -860,6 +1085,28 @@
     </style>
 </head>
 <body>
+    <!-- Launch Countdown Banner -->
+    <div class="launch-banner" id="launch-banner">
+        <div class="launch-content">
+            <div class="countdown-timer" id="countdown-timer">
+                <div class="time-unit">
+                    <span class="time-number" id="days">000</span>
+                    <span class="time-label">Days</span>
+                </div>
+                <div class="time-separator">:</div>
+                <div class="time-unit">
+                    <span class="time-number" id="hours">00</span>
+                    <span class="time-label">Hours</span>
+                </div>
+                <div class="time-separator">:</div>
+                <div class="time-unit">
+                    <span class="time-number" id="minutes">00</span>
+                    <span class="time-label">Minutes</span>
+                </div>
+            </div>
+            <span class="launch-text">🚀 Officially Launching December 1, 2025</span>
+        </div>
+    </div>
     <!-- Neural Network Background -->
     <canvas id="neural-bg"></canvas>
 
@@ -867,15 +1114,33 @@
     <nav id="navbar">
         <div class="nav-container">
             <div class="logo">Big Pic Solutions</div>
+            
+            <!-- Mobile Menu Button -->
+            <button class="mobile-menu-btn" id="mobile-menu-btn" aria-label="Toggle mobile menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            
+            <!-- Desktop Navigation -->
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#about">About</a></li>
                 <li><a href="#services">Services</a></li>
-                <li><a href="#efficiency">Efficiency</a></li>
-                <li><a href="#synergy">My Approach</a></li>
                 <li><a href="#wins">Client Wins</a></li>
                 <li><a href="#contact">Contact Me</a></li>
             </ul>
+            
+            <!-- Mobile Navigation Menu -->
+            <div class="mobile-nav" id="mobile-nav">
+                <ul class="mobile-nav-links">
+                    <li><a href="#home" class="mobile-nav-link">Home</a></li>
+                    <li><a href="#about" class="mobile-nav-link">About</a></li>
+                    <li><a href="#services" class="mobile-nav-link">Services</a></li>
+                    <li><a href="#wins" class="mobile-nav-link">Client Wins</a></li>
+                    <li><a href="#contact" class="mobile-nav-link">Contact Me</a></li>
+                </ul>
+            </div>
         </div>
     </nav>
 
@@ -887,58 +1152,47 @@
             <div class="ai-circle"></div>
         </div>
         <div class="hero-content">
-            <h1>The Future of Tech Support is Here</h1>
-            <p class="tagline">Where 25 Years of Expertise Meets AI Innovation</p>
+            <h1>Stop Over Paying for IT Services</h1>
+            <p class="tagline">I leverage AI and 25 years of experience to cut costs and streamline your operations</p>
             <p class="hero-description">
-                Experience technology support reimagined. I combine decades of human expertise 
-                with cutting-edge AI to deliver solutions that are faster, smarter, and more 
-                comprehensive than traditional consulting.
+                Most IT consultants try to sell you more tools and more "stuff". I eliminate what is bleeding your budget. 
+                With AI-powered analysis and decades of real-world experience, I identify redundant licenses, 
+                consolidate overlapping systems, and streamline your technology stack for maximum efficiency.
             </p>
-            <a href="#contact" class="cta-button">Get AI-Powered Support</a>
+            <a href="#contact" class="cta-button">Let's Collaborate</a>
         </div>
     </section>
 
     <!-- About Section -->
     <section class="about fade-in" id="about">
-        <h2 class="section-title">Your Expert Tech Ally, Powered by AI</h2>
+        <h2 class="section-title">The IT Cost-Cutting Expert Who Saves You Money</h2>
         <p class="section-description">
-            At Big Pic Solutions, I combine over <strong>25 years of hands-on IT experience</strong> with the precision and speed of 
-            <strong>cutting-edge AI tools</strong> to provide next-level tech support. Whether you're a small business looking for 
-            scalable solutions or an individual needing home tech help, I don't just fix problems — I future-proof your systems.
+            <strong>I don't sell you more technology — I eliminate the expensive, redundant tools bleeding your budget.</strong> 
+            With over <strong>25 years of hands-on IT experience</strong> and <strong>cutting-edge AI analysis tools</strong>, 
+            I specialize in identifying software bloat, consolidating overlapping systems, and streamlining operations. 
+            My clients typically see <strong>30-60% cost reductions</strong> while improving performance and security.
         </p>
         
         <div class="expertise-grid">
             <div class="expertise-card">
-                <div class="expertise-icon">🧠</div>
-                <h3>Human Expertise</h3>
-                <ul>
-                    <li><strong>Apple Certified Support Professional</strong> - Official Apple certification for advanced troubleshooting</li>
-                    <li>Former IT lead for companies leveraging <strong>Apple, Windows, Unifi, Synology, SonicWall, and Microsoft 365</strong></li>
-                    <li>Deep experience across <strong>network infrastructure</strong>, <strong>domain administration</strong>, <strong>virtualization (Hyper-V)</strong>, and <strong>cybersecurity</strong></li>
-                    <li>Specialized in <strong>MSP workflows</strong>, automation via Halo PSA, NinjaOne, Addigy</li>
-                    <li>Onsite and remote support pro: Mac optimization, VPN config, SharePoint workflows, DNS setups</li>
-                </ul>
-            </div>
-            
-            <div class="expertise-card">
                 <div class="expertise-icon">🤖</div>
-                <h3>AI-Enhanced Support</h3>
+                <h3>Technical Excellence</h3>
                 <ul>
-                    <li>Leverage AI for <strong>fast diagnostics</strong>, <strong>pattern detection</strong>, and <strong>automated monitoring</strong></li>
-                    <li>Build AI-integrated tools for stock market analysis, IT dashboards, and local LLM automation</li>
-                    <li>Run and maintain <strong>local AI servers</strong> with multi-GPU configurations</li>
-                    <li>Expert in Claude, Ollama, and other cutting-edge AI platforms</li>
+                    <li>Expert in <strong>Microsoft 365, Synology, Unifi, SonicWall</strong> environments</li>
+                    <li>Specialized in <strong>MSP workflows</strong> and enterprise monitoring</li>
+                    <li>Advanced <strong>AI integration</strong> with Claude, Ollama, local servers</li>
+                    <li>Deep experience in <strong>virtualization, networking, cybersecurity</strong></li>
                 </ul>
             </div>
             
             <div class="expertise-card">
                 <div class="expertise-icon">🛠</div>
-                <h3>What Sets Me Apart</h3>
+                <h3>Cost-Cutting Expertise</h3>
                 <ul>
-                    <li>I <strong>don't just follow scripts</strong> — I solve undocumented, high-level problems</li>
-                    <li>Build <strong>custom automation</strong> and integrate services like M365 + Synology</li>
-                    <li>Support <strong>ethical tech choices</strong> with deep security knowledge</li>
-                    <li>Reduce overhead while enhancing security and performance</li>
+                    <li><strong>Apple Certified Support Professional</strong> — I don't sell you tools, I eliminate expensive ones</li>
+                    <li><strong>Vendor-agnostic approach</strong> means no hidden sales agenda</li>
+                    <li>AI-powered audits reveal <strong>hidden inefficiencies and waste</strong></li>
+                    <li>Focus on <strong>reducing overhead while enhancing security and performance</strong></li>
                 </ul>
             </div>
         </div>
@@ -949,18 +1203,10 @@
             <div class="tech-badges">
                 <span class="tech-badge">Apple</span>
                 <span class="tech-badge">Microsoft 365</span>
-                <span class="tech-badge">Unifi</span>
                 <span class="tech-badge">Synology</span>
-                <span class="tech-badge">SonicWall</span>
-                <span class="tech-badge">Virtualization</span>
-                <span class="tech-badge">Halo PSA</span>
-                <span class="tech-badge">NinjaOne</span>
-                <span class="tech-badge">Addigy</span>
+                <span class="tech-badge">Unifi</span>
                 <span class="tech-badge">Claude AI</span>
-                <span class="tech-badge">Ollama</span>
-                <span class="tech-badge">Python</span>
-                <span class="tech-badge">Networking</span>
-                <span class="tech-badge">VPN</span>
+                <span class="tech-badge">Cybersecurity</span>
             </div>
         </div>
         
@@ -979,7 +1225,7 @@
 
     <!-- Services Section -->
     <section class="services fade-in" id="services">
-        <h2 class="section-title">My Services</h2>
+        <h2 class="section-title">How I Save You Money</h2>
         <div class="services-grid">
             <div class="service-card">
                 <div class="service-icon">💰</div>
@@ -1024,90 +1270,6 @@
         </div>
     </section>
 
-    <!-- Stop the Software Bloat Section -->
-    <section class="efficiency-audit fade-in" id="efficiency">
-        <h2 class="section-title">Stop the Software Bloat</h2>
-        <div class="efficiency-content">
-            <div class="problem-statement">
-                <h3>The Hidden Cost of IT Complexity</h3>
-                <p class="section-description">
-                    In today's market, <strong>software bloat has become a business model</strong>. Vendors profit from complexity, 
-                    not efficiency. Are you paying for tools that monitor your monitoring tools? Drowning in overlapping 
-                    licenses? Feeding vendor revenue streams instead of growing your business?
-                </p>
-            </div>
-            
-            <div class="efficiency-grid">
-                <div class="efficiency-card">
-                    <div class="efficiency-icon">📊</div>
-                    <h3>AI-Powered Analysis</h3>
-                    <p>I use advanced AI tools to audit your entire technology stack, identifying redundancies, unused licenses, and opportunities for consolidation.</p>
-                </div>
-                
-                <div class="efficiency-card">
-                    <div class="efficiency-icon">🎯</div>
-                    <h3>Vendor-Agnostic Approach</h3>
-                    <p>With 25 years of experience, I know what actually works vs. what just sells. I'm not here to add more tools—I'm here to eliminate unnecessary ones.</p>
-                </div>
-                
-                <div class="efficiency-card">
-                    <div class="efficiency-icon">💵</div>
-                    <h3>Measurable Savings</h3>
-                    <p>Typical clients see 30-60% reduction in software costs while improving operational efficiency. Technology should reduce expenses, not create them.</p>
-                </div>
-            </div>
-            
-            <div class="efficiency-cta">
-                <h3>Ready to Stop the Bleeding?</h3>
-                <p>Let me analyze your current setup and show you exactly where your budget is being wasted.</p>
-                <a href="#contact" class="cta-button">Get Free Efficiency Assessment</a>
-            </div>
-        </div>
-    </section>
-
-    <!-- Synergy Section -->
-    <section class="synergy fade-in" id="synergy">
-        <h2 class="section-title">The Power of Human + AI</h2>
-        <div class="synergy-visual">
-            <div class="synergy-item">
-                <div class="synergy-icon">👨‍💻</div>
-                <h3>Human Expertise</h3>
-                <p>25 years of hands-on experience solving real-world tech challenges</p>
-            </div>
-            <div class="plus-sign">+</div>
-            <div class="synergy-item">
-                <div class="synergy-icon">🧠</div>
-                <h3>AI Intelligence</h3>
-                <p>Instant access to vast knowledge and pattern recognition capabilities</p>
-            </div>
-            <div class="plus-sign">=</div>
-            <div class="synergy-item">
-                <div class="synergy-icon">⚡</div>
-                <h3>Unmatched Solutions</h3>
-                <p>Faster, smarter, cheaper and more comprehensive support than ever before</p>
-            </div>
-        </div>
-        
-        <div class="stats">
-            <div class="stat-item">
-                <div class="stat-number">25+</div>
-                <div class="stat-label">Years Experience</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">1000+</div>
-                <div class="stat-label">Problems Solved</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">24/7</div>
-                <div class="stat-label">AI Assistance</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-number">40%</div>
-                <div class="stat-label">Average Cost Reduction</div>
-            </div>
-        </div>
-    </section>
-
     <!-- Client Wins Section -->
     <section class="client-wins fade-in" id="wins">
         <h2 class="section-title">Real Results, Real Impact</h2>
@@ -1115,29 +1277,29 @@
             <div class="win-card">
                 <div class="win-icon">🛡️</div>
                 <h3>Ransomware Recovery Hero</h3>
-                <p class="win-description">When a company fell victim to ransomware, I didn't just restore their data, I rebuilt their entire infrastructure with enhanced security, increased efficency and implemented monitoring that prevents future attacks.</p>
+                <p class="win-description">When a company fell victim to ransomware, I didn't just restore their data, I rebuilt their infrastructure with enhanced security, increased efficency and implemented monitoring that prevents future attacks.</p>
                 <div class="win-impact">100% Data Recovery • Zero Downtime Since</div>
             </div>
             <div class="win-card">
                 <div class="win-icon">💰</div>
                 <h3>Software Bloat Elimination</h3>
-                <p class="win-description">Audited a growing company's technology stack and discovered they were paying for 7 different monitoring tools that overlapped functions. Consolidated to 2 essential platforms while improving visibility and reducing operational complexity.</p>
-                <div class="win-impact">$47K Annual Savings • 65% License Reduction • Simpler Operations</div>
+                <p class="win-description">Audited a growing company's technology stack and discovered they were paying for unnecessary monitoring tools that overlapped functions and paying for monitoring on devices not even in use. I also Identified over complications in their infrastructure that were causing them to pay for more than they needed to, saving them $1000 a month alone.</p>
+                <div class="win-impact">Annual Savings to reinvest • Simpler Operations</div>
             </div>
             <div class="win-card">
                 <div class="win-icon">⏱️</div>
                 <h3>Automation Game Changer</h3>
-                <p class="win-description">Created custom internal tools for real-time asset tracking, calendar automation, and IT audit compliance. What used to take days now happens automatically in minutes.</p>
-                <div class="win-impact">Uncountable hours saved • Peace of mind from automated compliance checks</div>
+                <p class="win-description">Created custom internal tools for real-time asset tracking, Curated client list for timed marketing campaigns, and IT audit compliance. What used to take <b>days</b> now happens automatically in <b>minutes</b>.</p>
+                <div class="win-impact">Uncountable hours saved • Time freed up to focus on other important things</div>
             </div>
         </div>
     </section>
 
     <!-- Contact Section -->
     <section class="contact fade-in" id="contact">
-        <h2 class="section-title">Ready to Experience the Future?</h2>
+        <h2 class="section-title">Ready to Work Together?</h2>
         <div class="contact-content">
-            <p>Don't settle for traditional tech support. Get the power of human expertise enhanced by AI.</p>
+            <p>Let's discuss your IT challenges and explore how we can optimize your technology stack together.</p>
             <form class="contact-form" action="https://formsubmit.co/daryll.gomas@gmail.com" method="POST">
                 <!-- 
                 SETUP INSTRUCTIONS:
@@ -1156,8 +1318,8 @@
                 
                 <input type="text" name="name" class="form-input" placeholder="Your Name" required>
                 <input type="email" name="email" class="form-input" placeholder="Your Email" required>
-                <textarea name="message" class="form-input" placeholder="Tell me about your tech challenge" rows="4" required></textarea>
-                <button type="submit" class="cta-button">Get Started</button>
+                <textarea name="message" class="form-input" placeholder="Tell me about your current IT setup and challenges" rows="4" required></textarea>
+                <button type="submit" class="cta-button">Let's Collaborate</button>
             </form>
         </div>
     </section>
@@ -1259,15 +1421,93 @@
             initParticles();
         });
 
-        // Navbar scroll effect
-        window.addEventListener('scroll', () => {
-            const navbar = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                navbar.classList.add('scrolled');
+        // Mobile Navigation Toggle
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        const mobileNav = document.getElementById('mobile-nav');
+        const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+        const body = document.body;
+
+        function toggleMobileNav() {
+            const isActive = mobileNav.classList.contains('active');
+            
+            if (isActive) {
+                closeMobileNav();
             } else {
-                navbar.classList.remove('scrolled');
+                openMobileNav();
+            }
+        }
+
+        function openMobileNav() {
+            mobileNav.classList.add('active');
+            mobileMenuBtn.classList.add('active');
+            body.classList.add('mobile-nav-open');
+        }
+
+        function closeMobileNav() {
+            mobileNav.classList.remove('active');
+            mobileMenuBtn.classList.remove('active');
+            body.classList.remove('mobile-nav-open');
+        }
+
+        // Event listeners
+        mobileMenuBtn.addEventListener('click', toggleMobileNav);
+
+        // Close mobile nav when clicking on a link
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                closeMobileNav();
+            });
+        });
+
+        // Close mobile nav when clicking outside
+        mobileNav.addEventListener('click', (e) => {
+            if (e.target === mobileNav) {
+                closeMobileNav();
             }
         });
+
+        // Close mobile nav on escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && mobileNav.classList.contains('active')) {
+                closeMobileNav();
+            }
+        });
+
+        // Close mobile nav on window resize to desktop size
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768 && mobileNav.classList.contains('active')) {
+                closeMobileNav();
+            }
+        });
+
+        // Launch Countdown Timer
+        function updateCountdown() {
+            const launchDate = new Date('December 1, 2025 00:00:00').getTime();
+            const now = new Date().getTime();
+            const distance = launchDate - now;
+
+            if (distance > 0) {
+                const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+
+                // Update countdown display with zero padding
+                document.getElementById('days').textContent = days.toString().padStart(3, '0');
+                document.getElementById('hours').textContent = hours.toString().padStart(2, '0');
+                document.getElementById('minutes').textContent = minutes.toString().padStart(2, '0');
+            } else {
+                // Launch date has passed - hide banner and adjust layout
+                const banner = document.getElementById('launch-banner');
+                const nav = document.querySelector('nav');
+                banner.style.display = 'none';
+                nav.style.top = '0'; // Move nav back to top
+                document.body.style.paddingTop = '60px'; // Just nav height
+            }
+        }
+
+        // Update countdown immediately and then every minute
+        updateCountdown();
+        setInterval(updateCountdown, 60000); // Update every minute
 
         // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
