@@ -389,9 +389,12 @@
             padding: 1rem 2rem;
             text-decoration: none;
             transition: all 0.4s ease;
-            position: relative;
+            position: absolute;
+            bottom: 12rem;
+            left: 50%;
+            transform: translateX(-50%);
             overflow: hidden;
-            margin-top: 24rem;
+            z-index: 20;
         }
 
         .hero-cta::before {
@@ -1094,13 +1097,14 @@
                 In a world confused by change, I help businesses see clearly.
                 AI-powered insight, 25 years of experience, and a vision for what's possible.
             </p>
-            <a href="#contact" class="hero-cta">
-                <span>Begin the Journey</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-            </a>
-        </div>
+            </div>
+
+        <a href="#contact" class="hero-cta">
+            <span>Begin the Journey</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+        </a>
 
         <div class="stats-bar">
             <div class="stat">
