@@ -521,6 +521,93 @@
             color: var(--light);
         }
 
+        /* Steve Jobs Quote Styling */
+        .jobs-quote {
+            display: block;
+            font-size: 1.25rem;
+            line-height: 1.8;
+            font-style: italic;
+            font-weight: 500;
+            background: linear-gradient(135deg, var(--dawn) 0%, var(--sunrise) 50%, var(--coral) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            padding: 1.5rem 2rem;
+            margin-top: 1.5rem;
+            border-left: 3px solid var(--dawn);
+            margin-left: 0.5rem;
+        }
+
+        .jobs-quote::before,
+        .jobs-quote::after {
+            font-style: normal;
+            font-weight: 400;
+            background: linear-gradient(135deg, var(--dawn) 0%, var(--sunrise) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: Georgia, serif;
+        }
+
+        .jobs-quote::before {
+            content: '"';
+        }
+
+        .jobs-quote::after {
+            content: '"';
+        }
+
+        .jobs-quote .emphasis {
+            font-style: normal;
+            font-weight: 700;
+            background: linear-gradient(
+                90deg,
+                var(--dawn) 0%,
+                var(--sunrise) 25%,
+                #fff8e7 50%,
+                var(--sunrise) 75%,
+                var(--dawn) 100%
+            );
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 5s linear infinite, glow-pulse 5s ease-in-out infinite;
+            position: relative;
+            padding-bottom: 2px;
+        }
+
+        .jobs-quote .emphasis::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--dawn), var(--sunrise), var(--coral));
+            transform: scaleX(0);
+            transform-origin: left;
+            animation: underline-draw 5s linear infinite;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% center; }
+            100% { background-position: -200% center; }
+        }
+
+        @keyframes underline-draw {
+            0% { transform: scaleX(0); transform-origin: left; }
+            50% { transform: scaleX(1); transform-origin: left; }
+            50.1% { transform: scaleX(1); transform-origin: right; }
+            100% { transform: scaleX(0); transform-origin: right; }
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% { filter: drop-shadow(0 0 2px rgba(232, 184, 125, 0.3)); }
+            50% { filter: drop-shadow(0 0 12px rgba(232, 184, 125, 0.8)) drop-shadow(0 0 20px rgba(244, 162, 97, 0.5)); }
+        }
+
         /* Vision illustration */
         .vision-illustration {
             position: relative;
@@ -1131,9 +1218,12 @@
                 <p class="vision-text">
                     Everyone's talking about AI. <strong>Few understand it.</strong> While others react with fear,
                     I see opportunity. While companies drown in redundant tools and bleeding budgets,
-                    I see the path to clarity.
+                    I see the path to simplicity and elegance.
                     <br><br>
                     <strong>The future isn't something that happens to you.</strong> It's something you shape.
+                    <br><br>
+                    <em>As the great Steve Jobs once said:</em>
+                    <span class="jobs-quote">Everything around you that you call life was made up by people no smarter than you. And you can change it, you can influence it, you can build your own things that other people can use. Once you learn that, you'll <span class="emphasis">never</span> be the same again.</span>
                 </p>
 
                 <div class="expertise-grid">
