@@ -109,8 +109,53 @@ def init_db():
     conn.commit()
     conn.close()
 
+def migrate_db():
+    """Run database migrations for schema updates"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    # Check if address column exists in clients table
+    cursor.execute("PRAGMA table_info(clients)")
+    client_columns = [col[1] for col in cursor.fetchall()]
+
+    if 'address' not in client_columns:
+        cursor.execute('ALTER TABLE clients ADD COLUMN address TEXT DEFAULT ""')
+        conn.commit()
+
+    # Check for invoice tracking columns in jobs table
+    cursor.execute("PRAGMA table_info(jobs)")
+    job_columns = [col[1] for col in cursor.fetchall()]
+
+    if 'invoice_number' not in job_columns:
+        cursor.execute('ALTER TABLE jobs ADD COLUMN invoice_number INTEGER')
+        conn.commit()
+
+    if 'invoice_status' not in job_columns:
+        cursor.execute('ALTER TABLE jobs ADD COLUMN invoice_status TEXT DEFAULT "draft"')
+        conn.commit()
+
+    if 'invoice_sent_date' not in job_columns:
+        cursor.execute('ALTER TABLE jobs ADD COLUMN invoice_sent_date DATE')
+        conn.commit()
+
+    if 'invoice_paid_date' not in job_columns:
+        cursor.execute('ALTER TABLE jobs ADD COLUMN invoice_paid_date DATE')
+        conn.commit()
+
+    conn.close()
+
+
+def get_next_invoice_number():
+    """Get the next sequential invoice number"""
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    result = cursor.execute('SELECT MAX(invoice_number) FROM jobs').fetchone()[0]
+    conn.close()
+    return (result or 0) + 1
+
 # Initialize database on startup
 init_db()
+migrate_db()
 
 # ============== CLIENT ROUTES ==============
 
@@ -137,12 +182,13 @@ def add_client():
 
     try:
         cursor.execute('''
-            INSERT INTO clients (name, email, phone, hourly_rate, notes)
-            VALUES (?, ?, ?, ?, ?)
+            INSERT INTO clients (name, email, phone, address, hourly_rate, notes)
+            VALUES (?, ?, ?, ?, ?, ?)
         ''', (
             data.get('name'),
             data.get('email', ''),
             data.get('phone', ''),
+            data.get('address', ''),
             float(data.get('hourly_rate', 140.00)),
             data.get('notes', '')
         ))
@@ -176,12 +222,13 @@ def update_client(client_id):
     try:
         cursor.execute('''
             UPDATE clients
-            SET name = ?, email = ?, phone = ?, hourly_rate = ?, notes = ?, updated_at = CURRENT_TIMESTAMP
+            SET name = ?, email = ?, phone = ?, address = ?, hourly_rate = ?, notes = ?, updated_at = CURRENT_TIMESTAMP
             WHERE id = ?
         ''', (
             data.get('name'),
             data.get('email', ''),
             data.get('phone', ''),
+            data.get('address', ''),
             float(data.get('hourly_rate', 140.00)),
             data.get('notes', ''),
             client_id
@@ -233,9 +280,12 @@ def add_job():
         hourly_rate = float(data.get('hourly_rate', 140.00))
         total = hours * hourly_rate
 
+        # Get the next invoice number
+        invoice_number = get_next_invoice_number()
+
         cursor.execute('''
-            INSERT INTO jobs (client_id, job_date, description, hours, hourly_rate, total, notes, status)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO jobs (client_id, job_date, description, hours, hourly_rate, total, notes, status, invoice_number, invoice_status)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             int(data.get('client_id')),
             data.get('job_date'),
@@ -244,12 +294,14 @@ def add_job():
             hourly_rate,
             total,
             data.get('notes', ''),
+            'draft',
+            invoice_number,
             'draft'
         ))
         conn.commit()
         job_id = cursor.lastrowid
         conn.close()
-        return jsonify({'success': True, 'id': job_id}), 201
+        return jsonify({'success': True, 'id': job_id, 'invoice_number': invoice_number}), 201
     except Exception as e:
         conn.close()
         return jsonify({'success': False, 'error': str(e)}), 400
@@ -310,7 +362,7 @@ def generate_pdf(job_id):
     conn = get_db_connection()
     cursor = conn.cursor()
     job = cursor.execute('''
-        SELECT j.*, c.name as client_name, c.email as client_email, c.phone as client_phone
+        SELECT j.*, c.name as client_name, c.email as client_email, c.phone as client_phone, c.address as client_address
         FROM jobs j
         JOIN clients c ON j.client_id = c.id
         WHERE j.id = ?
@@ -323,141 +375,264 @@ def generate_pdf(job_id):
     if not job:
         return jsonify({'error': 'Job not found'}), 404
 
+    # Get invoice number (assign one if missing)
+    invoice_number = job['invoice_number']
+    if not invoice_number:
+        invoice_number = get_next_invoice_number()
+        # Update the job with the invoice number
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute('UPDATE jobs SET invoice_number = ? WHERE id = ?', (invoice_number, job_id))
+        conn.commit()
+        conn.close()
+
+    invoice_id = f"INV-{invoice_number:04d}"
+
     # Create PDF in memory
     pdf_buffer = BytesIO()
     doc = SimpleDocTemplate(pdf_buffer, pagesize=letter,
-                           rightMargin=0.5*inch, leftMargin=0.5*inch,
-                           topMargin=0.5*inch, bottomMargin=0.5*inch)
+                           rightMargin=0.75*inch, leftMargin=0.75*inch,
+                           topMargin=0.75*inch, bottomMargin=0.75*inch)
 
     story = []
     styles = getSampleStyleSheet()
 
-    # Custom styles
-    title_style = ParagraphStyle(
-        'CustomTitle',
-        parent=styles['Heading1'],
-        fontSize=24,
-        textColor=colors.HexColor('#0066cc'),
-        spaceAfter=6,
-        alignment=TA_LEFT
-    )
+    # Brand colors matching the website theme
+    brand_deep = colors.HexColor('#0a0f1a')
+    brand_horizon = colors.HexColor('#2d4a6f')
+    brand_sunrise = colors.HexColor('#f4a261')
+    brand_coral = colors.HexColor('#ef8354')
+    brand_mist = colors.HexColor('#52616b')
 
-    heading_style = ParagraphStyle(
-        'CustomHeading',
-        parent=styles['Heading2'],
-        fontSize=12,
-        textColor=colors.HexColor('#0066cc'),
-        spaceAfter=12,
-        spaceBefore=12
+    # Custom styles
+    company_name_style = ParagraphStyle(
+        'CompanyName',
+        parent=styles['Heading1'],
+        fontSize=22,
+        textColor=brand_horizon,
+        spaceAfter=8,
+        alignment=TA_LEFT,
+        fontName='Helvetica-Bold'
     )
 
     company_info_style = ParagraphStyle(
         'CompanyInfo',
         parent=styles['Normal'],
         fontSize=10,
-        textColor=colors.black,
-        spaceAfter=4,
+        textColor=brand_mist,
+        spaceAfter=2,
         alignment=TA_LEFT
     )
 
-    # Company header (top left)
-    story.append(Paragraph(settings['company_name'] if settings else "Big Pic Solutions", title_style))
-    if settings:
-        story.append(Paragraph(settings['owner_name'], company_info_style))
-        story.append(Paragraph(settings['address'], company_info_style))
-        story.append(Paragraph(settings['phone'], company_info_style))
-        story.append(Paragraph(settings['email'], company_info_style))
-    story.append(Spacer(1, 0.3*inch))
+    invoice_title_style = ParagraphStyle(
+        'InvoiceTitle',
+        parent=styles['Heading1'],
+        fontSize=36,
+        textColor=brand_sunrise,
+        spaceBefore=20,
+        spaceAfter=0,
+        alignment=TA_RIGHT,
+        fontName='Helvetica-Bold'
+    )
 
-    # Invoice title
-    story.append(Paragraph("INVOICE", heading_style))
-    story.append(Spacer(1, 0.2*inch))
+    section_header_style = ParagraphStyle(
+        'SectionHeader',
+        parent=styles['Normal'],
+        fontSize=11,
+        textColor=brand_horizon,
+        spaceAfter=8,
+        spaceBefore=16,
+        fontName='Helvetica-Bold'
+    )
 
-    # Invoice details
-    details_data = [
-        ['Invoice #:', f"JOB-{job_id:05d}", 'Date:', datetime.now().strftime('%Y-%m-%d')],
-        ['Client:', job['client_name'], 'Due Date:', (datetime.fromisoformat(job['job_date'])).strftime('%Y-%m-%d')],
+    normal_style = ParagraphStyle(
+        'CustomNormal',
+        parent=styles['Normal'],
+        fontSize=10,
+        textColor=brand_deep,
+        spaceAfter=4
+    )
+
+    # Header section with company info and INVOICE title
+    header_data = [
+        [Paragraph(settings['company_name'] if settings else "Big Pic Solutions", company_name_style),
+         Paragraph("INVOICE", invoice_title_style)]
     ]
-
-    details_table = Table(details_data, colWidths=[1.2*inch, 2.3*inch, 1.2*inch, 2.3*inch])
-    details_table.setStyle(TableStyle([
-        ('FONTNAME', (0, 0), (-1, -1), 'Helvetica'),
-        ('FONTSIZE', (0, 0), (-1, -1), 10),
-        ('TEXTCOLOR', (0, 0), (0, -1), colors.HexColor('#0066cc')),
-        ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+    header_table = Table(header_data, colWidths=[4*inch, 3*inch])
+    header_table.setStyle(TableStyle([
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('ALIGN', (1, 0), (1, 0), 'RIGHT'),
     ]))
+    story.append(header_table)
 
-    story.append(details_table)
-    story.append(Spacer(1, 0.3*inch))
+    # Add spacing after header
+    story.append(Spacer(1, 0.15*inch))
 
-    # Bill to section
-    story.append(Paragraph("Bill To:", heading_style))
-    bill_to = f"{job['client_name']}"
-    if job['client_email']:
-        bill_to += f"<br/>{job['client_email']}"
-    if job['client_phone']:
-        bill_to += f"<br/>{job['client_phone']}"
-    story.append(Paragraph(bill_to, styles['Normal']))
-    story.append(Spacer(1, 0.2*inch))
+    # Company details row
+    company_details = []
+    if settings:
+        company_details.append(Paragraph(settings['owner_name'], company_info_style))
+        company_details.append(Paragraph(settings['address'], company_info_style))
+        company_details.append(Paragraph(f"{settings['phone']}  •  {settings['email']}", company_info_style))
 
-    # Service description
-    story.append(Paragraph("Service Description:", heading_style))
-    story.append(Paragraph(job['description'], styles['Normal']))
-    if job['notes']:
-        story.append(Spacer(1, 0.1*inch))
-        story.append(Paragraph("<b>Notes:</b>", styles['Normal']))
-        story.append(Paragraph(job['notes'], styles['Normal']))
-    story.append(Spacer(1, 0.3*inch))
+    for detail in company_details:
+        story.append(detail)
 
-    # Line items table
-    line_items = [
-        ['Description', 'Hours', 'Rate', 'Total'],
-        [job['description'][:40], f"{job['hours']}", f"${job['hourly_rate']:.2f}", f"${job['total']:.2f}"],
-        ['', '', '', ''],
-        ['', '', 'Subtotal:', f"${job['total']:.2f}"],
-        ['', '', 'Tax (0%):', '$0.00'],
-        ['', '', 'TOTAL:', f"${job['total']:.2f}"],
+    story.append(Spacer(1, 0.4*inch))
+
+    # Invoice details box
+    invoice_date = datetime.now().strftime('%B %d, %Y')
+    job_date = datetime.fromisoformat(job['job_date']).strftime('%B %d, %Y')
+
+    invoice_details = [
+        ['Invoice Number:', invoice_id],
+        ['Invoice Date:', invoice_date],
+        ['Service Date:', job_date],
+        ['Status:', job['invoice_status'].upper() if job['invoice_status'] else 'DRAFT'],
     ]
 
-    line_table = Table(line_items, colWidths=[3*inch, 1*inch, 1.2*inch, 1.3*inch])
+    details_table = Table(invoice_details, colWidths=[1.5*inch, 2*inch])
+    details_table.setStyle(TableStyle([
+        ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+        ('FONTNAME', (1, 0), (1, -1), 'Helvetica'),
+        ('FONTSIZE', (0, 0), (-1, -1), 10),
+        ('TEXTCOLOR', (0, 0), (0, -1), brand_horizon),
+        ('TEXTCOLOR', (1, 0), (1, -1), brand_deep),
+        ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
+        ('ALIGN', (1, 0), (1, -1), 'LEFT'),
+        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ('TOPPADDING', (0, 0), (-1, -1), 4),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
+        ('RIGHTPADDING', (0, 0), (0, -1), 12),
+        ('BACKGROUND', (0, 0), (-1, -1), colors.HexColor('#f8f9fa')),
+        ('BOX', (0, 0), (-1, -1), 1, colors.HexColor('#e9ecef')),
+    ]))
+    story.append(details_table)
+    story.append(Spacer(1, 0.4*inch))
+
+    # Bill To section
+    story.append(Paragraph("BILL TO", section_header_style))
+
+    bill_to_lines = [job['client_name']]
+    if job['client_address']:
+        bill_to_lines.append(job['client_address'])
+    if job['client_email']:
+        bill_to_lines.append(job['client_email'])
+    if job['client_phone']:
+        bill_to_lines.append(job['client_phone'])
+
+    for line in bill_to_lines:
+        story.append(Paragraph(line, normal_style))
+
+    story.append(Spacer(1, 0.3*inch))
+
+    # Services section
+    story.append(Paragraph("SERVICES", section_header_style))
+
+    # Line items table with cleaner design
+    line_items = [
+        ['Description', 'Hours', 'Rate', 'Amount'],
+        [job['description'], f"{job['hours']:.2f}", f"${job['hourly_rate']:.2f}/hr", f"${job['total']:.2f}"],
+    ]
+
+    # Add notes as a sub-row if present
+    if job['notes']:
+        line_items.append([Paragraph(f"<i>Note: {job['notes']}</i>", ParagraphStyle('Note', fontSize=9, textColor=brand_mist)), '', '', ''])
+
+    line_table = Table(line_items, colWidths=[3.5*inch, 1*inch, 1.25*inch, 1.25*inch])
     line_table.setStyle(TableStyle([
         ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-        ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
         ('FONTSIZE', (0, 0), (-1, 0), 10),
-        ('FONTSIZE', (0, -1), (-1, -1), 11),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.HexColor('#0066cc')),
-        ('TEXTCOLOR', (0, -1), (-1, -1), colors.HexColor('#0066cc')),
-        ('ALIGN', (1, 1), (-1, -1), 'RIGHT'),
+        ('FONTSIZE', (0, 1), (-1, -1), 10),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('BACKGROUND', (0, 0), (-1, 0), brand_horizon),
+        ('TEXTCOLOR', (0, 1), (-1, -1), brand_deep),
+        ('ALIGN', (1, 0), (-1, -1), 'RIGHT'),
         ('ALIGN', (0, 0), (0, -1), 'LEFT'),
         ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('LINEBELOW', (0, 0), (-1, 0), 1, colors.HexColor('#0066cc')),
-        ('LINEABOVE', (0, -1), (-1, -1), 2, colors.HexColor('#0066cc')),
-        ('GRID', (0, -4), (-1, -2), 0.5, colors.grey),
+        ('TOPPADDING', (0, 0), (-1, -1), 10),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 10),
+        ('LEFTPADDING', (0, 0), (-1, -1), 8),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 8),
+        ('LINEBELOW', (0, 1), (-1, -2), 0.5, colors.HexColor('#e9ecef')),
+    ]))
+    story.append(line_table)
+    story.append(Spacer(1, 0.2*inch))
+
+    # Totals section - right aligned
+    totals_data = [
+        ['Subtotal:', f"${job['total']:.2f}"],
+        ['Tax (0%):', '$0.00'],
+        ['TOTAL DUE:', f"${job['total']:.2f}"],
+    ]
+
+    totals_table = Table(totals_data, colWidths=[1.5*inch, 1.25*inch])
+    totals_table.setStyle(TableStyle([
+        ('FONTNAME', (0, 0), (-1, -2), 'Helvetica'),
+        ('FONTNAME', (0, -1), (-1, -1), 'Helvetica-Bold'),
+        ('FONTSIZE', (0, 0), (-1, -2), 10),
+        ('FONTSIZE', (0, -1), (-1, -1), 12),
+        ('TEXTCOLOR', (0, 0), (-1, -2), brand_mist),
+        ('TEXTCOLOR', (0, -1), (-1, -1), brand_sunrise),
+        ('ALIGN', (0, 0), (0, -1), 'RIGHT'),
+        ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+        ('TOPPADDING', (0, 0), (-1, -1), 6),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
+        ('LINEABOVE', (0, -1), (-1, -1), 2, brand_sunrise),
     ]))
 
-    story.append(line_table)
-    story.append(Spacer(1, 0.4*inch))
+    # Right align the totals table
+    totals_wrapper = Table([[totals_table]], colWidths=[7*inch])
+    totals_wrapper.setStyle(TableStyle([
+        ('ALIGN', (0, 0), (0, 0), 'RIGHT'),
+    ]))
+    story.append(totals_wrapper)
+
+    story.append(Spacer(1, 0.6*inch))
 
     # Footer
     company_name = settings['company_name'] if settings else "Big Pic Solutions"
-    footer_text = f"Thank you for your business! {company_name} - AI-Powered Technology Consulting"
-    story.append(Paragraph(footer_text, ParagraphStyle(
+    footer_style = ParagraphStyle(
         'Footer',
         parent=styles['Normal'],
-        fontSize=9,
-        textColor=colors.grey,
-        alignment=TA_CENTER
-    )))
+        fontSize=10,
+        textColor=brand_horizon,
+        alignment=TA_CENTER,
+        spaceBefore=20
+    )
+    story.append(Paragraph("Thank you for your business!", footer_style))
 
-    # Build PDF
-    doc.build(story)
+    subfooter_style = ParagraphStyle(
+        'SubFooter',
+        parent=styles['Normal'],
+        fontSize=9,
+        textColor=brand_mist,
+        alignment=TA_CENTER
+    )
+    story.append(Paragraph(f"{company_name} • AI-Powered Technology Consulting", subfooter_style))
+
+    # Build PDF with optional PAID watermark
+    if job['invoice_status'] == 'paid':
+        from reportlab.pdfgen import canvas as pdf_canvas
+
+        def add_paid_watermark(canvas, doc):
+            canvas.saveState()
+            canvas.setFont('Helvetica-Bold', 72)
+            canvas.setFillColor(colors.Color(0.2, 0.8, 0.4, alpha=0.25))  # Light green
+            canvas.translate(4.25*inch, 5.5*inch)
+            canvas.rotate(45)
+            canvas.drawCentredString(0, 0, "PAID")
+            canvas.restoreState()
+
+        doc.build(story, onFirstPage=add_paid_watermark, onLaterPages=add_paid_watermark)
+    else:
+        doc.build(story)
 
     # Return PDF
     pdf_buffer.seek(0)
     return send_file(pdf_buffer, mimetype='application/pdf',
                      as_attachment=True,
-                     download_name=f'Invoice-JOB-{job_id:05d}.pdf')
+                     download_name=f'Invoice-{invoice_id}.pdf')
 
 @app.route('/api/jobs/<int:job_id>', methods=['DELETE'])
 def delete_job(job_id):
@@ -473,6 +648,59 @@ def delete_job(job_id):
     except Exception as e:
         conn.close()
         return jsonify({'success': False, 'error': str(e)}), 400
+
+
+@app.route('/api/jobs/<int:job_id>/status', methods=['PUT'])
+def update_invoice_status(job_id):
+    """Update invoice status (draft, sent, paid)"""
+    data = request.json
+    new_status = data.get('invoice_status')
+
+    if new_status not in ['draft', 'sent', 'paid']:
+        return jsonify({'success': False, 'error': 'Invalid status'}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        # Get current job data
+        job = cursor.execute('SELECT * FROM jobs WHERE id = ?', (job_id,)).fetchone()
+        if not job:
+            conn.close()
+            return jsonify({'success': False, 'error': 'Job not found'}), 404
+
+        # Assign invoice number if not already assigned
+        invoice_number = job['invoice_number']
+        if not invoice_number:
+            invoice_number = get_next_invoice_number()
+            cursor.execute('UPDATE jobs SET invoice_number = ? WHERE id = ?', (invoice_number, job_id))
+
+        # Update status and relevant dates
+        today = datetime.now().strftime('%Y-%m-%d')
+
+        if new_status == 'sent':
+            cursor.execute('''
+                UPDATE jobs SET invoice_status = ?, invoice_sent_date = ?, updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+            ''', (new_status, today, job_id))
+        elif new_status == 'paid':
+            cursor.execute('''
+                UPDATE jobs SET invoice_status = ?, invoice_paid_date = ?, updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+            ''', (new_status, today, job_id))
+        else:  # draft - clear dates
+            cursor.execute('''
+                UPDATE jobs SET invoice_status = ?, invoice_sent_date = NULL, invoice_paid_date = NULL, updated_at = CURRENT_TIMESTAMP
+                WHERE id = ?
+            ''', (new_status, job_id))
+
+        conn.commit()
+        conn.close()
+        return jsonify({'success': True, 'invoice_number': invoice_number, 'status': new_status})
+    except Exception as e:
+        conn.close()
+        return jsonify({'success': False, 'error': str(e)}), 400
+
 
 # ============== STATS ROUTE ==============
 
