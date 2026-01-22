@@ -22,6 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function initializeApp() {
+    // Initialize header stars
+    initHeaderStars();
+
     // Load initial data
     loadClients();
     loadJobs();
@@ -40,6 +43,25 @@ function initializeApp() {
 
     // Set today's date as default for job form
     document.getElementById('job-date').valueAsDate = new Date();
+}
+
+// ============== HEADER STARS ==============
+
+function initHeaderStars() {
+    const starsContainer = document.getElementById('header-stars');
+    if (!starsContainer) return;
+
+    const starCount = 30;
+
+    for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'header-star';
+        star.style.left = `${Math.random() * 100}%`;
+        star.style.top = `${Math.random() * 100}%`;
+        star.style.setProperty('--duration', `${2 + Math.random() * 4}s`);
+        star.style.setProperty('--delay', `${Math.random() * 3}s`);
+        starsContainer.appendChild(star);
+    }
 }
 
 // ============== NAVIGATION ==============
@@ -180,6 +202,7 @@ async function handleClientFormSubmit(e) {
         name: formData.get('name'),
         email: formData.get('email'),
         phone: formData.get('phone'),
+        address: formData.get('address'),
         hourly_rate: parseFloat(formData.get('hourly_rate')),
         notes: formData.get('notes'),
     };
@@ -312,6 +335,7 @@ function renderClients() {
             <div class="client-name">${escapeHtml(client.name)}</div>
             ${client.email ? `<div class="client-info"><strong>Email:</strong> ${escapeHtml(client.email)}</div>` : ''}
             ${client.phone ? `<div class="client-info"><strong>Phone:</strong> ${escapeHtml(client.phone)}</div>` : ''}
+            ${client.address ? `<div class="client-info"><strong>Address:</strong> ${escapeHtml(client.address)}</div>` : ''}
             <div class="client-rate">Rate: $${client.hourly_rate.toFixed(2)}/hour</div>
             ${client.notes ? `<div class="client-info"><strong>Notes:</strong> ${escapeHtml(client.notes)}</div>` : ''}
             <div class="client-actions">
@@ -331,6 +355,7 @@ function editClient(clientId) {
     document.getElementById('client-name').value = client.name;
     document.getElementById('client-email').value = client.email || '';
     document.getElementById('client-phone').value = client.phone || '';
+    document.getElementById('client-address').value = client.address || '';
     document.getElementById('client-rate').value = client.hourly_rate.toFixed(2);
     document.getElementById('client-notes').value = client.notes || '';
 
@@ -381,14 +406,40 @@ function renderJobs() {
         return;
     }
 
-    container.innerHTML = appState.jobs.map(job => `
+    container.innerHTML = appState.jobs.map(job => {
+        const invoiceNumber = job.invoice_number ? `INV-${String(job.invoice_number).padStart(4, '0')}` : 'Not assigned';
+        const invoiceStatus = job.invoice_status || 'draft';
+        const statusClass = `invoice-status-${invoiceStatus}`;
+        const statusLabel = invoiceStatus.charAt(0).toUpperCase() + invoiceStatus.slice(1);
+
+        // Build status action buttons based on current status
+        let statusActions = '';
+        if (invoiceStatus === 'draft') {
+            statusActions = `<button class="btn btn-small btn-status-sent" onclick="updateInvoiceStatus(${job.id}, 'sent')">Mark Sent</button>`;
+        } else if (invoiceStatus === 'sent') {
+            statusActions = `
+                <button class="btn btn-small btn-status-revert" onclick="updateInvoiceStatus(${job.id}, 'draft')">↩ Draft</button>
+                <button class="btn btn-small btn-status-paid" onclick="updateInvoiceStatus(${job.id}, 'paid')">Mark Paid</button>`;
+        } else if (invoiceStatus === 'paid') {
+            statusActions = `<button class="btn btn-small btn-status-revert" onclick="updateInvoiceStatus(${job.id}, 'sent')">↩ Unmark Paid</button>`;
+        }
+
+        return `
         <div class="job-card">
             <div class="job-header">
                 <div>
                     <div class="job-client">${escapeHtml(job.client_name)}</div>
                     <div class="job-title">${escapeHtml(job.description.substring(0, 60))}</div>
                 </div>
-                <div class="job-date">${new Date(job.job_date).toLocaleDateString()}</div>
+                <div class="job-meta">
+                    <div class="job-date">${new Date(job.job_date).toLocaleDateString()}</div>
+                    <div class="invoice-badge ${statusClass}">${statusLabel}</div>
+                </div>
+            </div>
+            <div class="job-invoice-info">
+                <span class="invoice-number">${invoiceNumber}</span>
+                ${job.invoice_sent_date ? `<span class="invoice-date">Sent: ${new Date(job.invoice_sent_date).toLocaleDateString()}</span>` : ''}
+                ${job.invoice_paid_date ? `<span class="invoice-date">Paid: ${new Date(job.invoice_paid_date).toLocaleDateString()}</span>` : ''}
             </div>
             <div class="job-description">${escapeHtml(job.description)}</div>
             ${job.notes ? `<div class="job-description"><strong>Notes:</strong> ${escapeHtml(job.notes)}</div>` : ''}
@@ -407,12 +458,34 @@ function renderJobs() {
                 </div>
             </div>
             <div class="job-actions">
-                <button class="btn btn-primary btn-small" onclick="openInvoiceModal(${job.id})">📄 Invoice</button>
+                ${statusActions}
+                <button class="btn btn-primary btn-small" onclick="openInvoiceModal(${job.id})">View Invoice</button>
                 <button class="btn btn-primary btn-small" onclick="editJob(${job.id})">Edit</button>
                 <button class="btn btn-danger btn-small" onclick="deleteJob(${job.id})">Delete</button>
             </div>
         </div>
-    `).join('');
+    `}).join('');
+}
+
+async function updateInvoiceStatus(jobId, newStatus) {
+    try {
+        const response = await fetch(`/api/jobs/${jobId}/status`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ invoice_status: newStatus }),
+        });
+
+        if (response.ok) {
+            const result = await response.json();
+            loadJobs();
+            showNotification(`Invoice marked as ${newStatus}`, 'success');
+        } else {
+            throw new Error('Failed to update invoice status');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification('Error updating invoice status: ' + error.message, 'error');
+    }
 }
 
 function renderRecentJobs() {
@@ -516,59 +589,104 @@ async function displayInvoice(jobId) {
             email: 'daryll.gomas@gmail.com'
         };
 
+        const invoiceNumber = job.invoice_number ? `INV-${String(job.invoice_number).padStart(4, '0')}` : 'Pending';
+        const invoiceStatus = job.invoice_status || 'draft';
+        const statusLabel = invoiceStatus.charAt(0).toUpperCase() + invoiceStatus.slice(1);
+
         const content = `
-            <div style="margin-bottom: 2rem;">
-                <h1 style="margin-bottom: 0.25rem;">${escapeHtml(settings.company_name)}</h1>
-                <div style="font-size: 0.9rem; line-height: 1.5;">
-                    ${escapeHtml(settings.owner_name)}<br>
-                    ${escapeHtml(settings.address)}<br>
-                    ${escapeHtml(settings.phone)}<br>
-                    ${escapeHtml(settings.email)}
+            <div class="invoice-preview-header">
+                <div class="invoice-company">
+                    <h1>${escapeHtml(settings.company_name)}</h1>
+                    <div class="invoice-company-details">
+                        ${escapeHtml(settings.owner_name)}<br>
+                        ${escapeHtml(settings.address)}<br>
+                        ${escapeHtml(settings.phone)} &bull; ${escapeHtml(settings.email)}
+                    </div>
+                </div>
+                <div class="invoice-title-block">
+                    <h2 class="invoice-title">INVOICE</h2>
+                    <div class="invoice-status-badge invoice-status-${invoiceStatus}">${statusLabel}</div>
                 </div>
             </div>
 
-            <h2>INVOICE</h2>
-
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0;">
-                <div>
-                    <strong>Invoice #:</strong> JOB-${String(jobId).padStart(5, '0')}<br>
-                    <strong>Date:</strong> ${new Date().toLocaleDateString()}<br>
-                    <strong>Due Date:</strong> ${new Date(job.job_date).toLocaleDateString()}
+            <div class="invoice-details-grid">
+                <div class="invoice-details-box">
+                    <div class="invoice-detail-row">
+                        <span class="invoice-detail-label">Invoice #:</span>
+                        <span class="invoice-detail-value">${invoiceNumber}</span>
+                    </div>
+                    <div class="invoice-detail-row">
+                        <span class="invoice-detail-label">Date:</span>
+                        <span class="invoice-detail-value">${new Date().toLocaleDateString()}</span>
+                    </div>
+                    <div class="invoice-detail-row">
+                        <span class="invoice-detail-label">Service Date:</span>
+                        <span class="invoice-detail-value">${new Date(job.job_date).toLocaleDateString()}</span>
+                    </div>
+                    ${job.invoice_sent_date ? `
+                    <div class="invoice-detail-row">
+                        <span class="invoice-detail-label">Sent:</span>
+                        <span class="invoice-detail-value">${new Date(job.invoice_sent_date).toLocaleDateString()}</span>
+                    </div>` : ''}
+                    ${job.invoice_paid_date ? `
+                    <div class="invoice-detail-row">
+                        <span class="invoice-detail-label">Paid:</span>
+                        <span class="invoice-detail-value">${new Date(job.invoice_paid_date).toLocaleDateString()}</span>
+                    </div>` : ''}
                 </div>
-                <div style="text-align: right;">
-                    <strong>Bill To:</strong><br>
-                    ${escapeHtml(job.client_name)}<br>
-                    ${job.client_email || ''}<br>
-                    ${job.client_phone || ''}
+                <div class="invoice-bill-to">
+                    <h3>Bill To</h3>
+                    <div class="invoice-client-info">
+                        ${escapeHtml(job.client_name)}<br>
+                        ${job.client_address ? escapeHtml(job.client_address) + '<br>' : ''}
+                        ${job.client_email || ''}<br>
+                        ${job.client_phone || ''}
+                    </div>
                 </div>
             </div>
 
-            <h2>Service Description</h2>
-            <p>${escapeHtml(job.description)}</p>
-            ${job.notes ? `<p><strong>Notes:</strong> ${escapeHtml(job.notes)}</p>` : ''}
+            <div class="invoice-services">
+                <h3>Services</h3>
+                <table class="invoice-table">
+                    <thead>
+                        <tr>
+                            <th style="text-align: left;">Description</th>
+                            <th style="text-align: right;">Hours</th>
+                            <th style="text-align: right;">Rate</th>
+                            <th style="text-align: right;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>${escapeHtml(job.description)}</td>
+                            <td style="text-align: right;">${job.hours.toFixed(2)}</td>
+                            <td style="text-align: right;">$${job.hourly_rate.toFixed(2)}/hr</td>
+                            <td style="text-align: right;">$${job.total.toFixed(2)}</td>
+                        </tr>
+                        ${job.notes ? `<tr class="invoice-notes-row"><td colspan="4"><em>Note: ${escapeHtml(job.notes)}</em></td></tr>` : ''}
+                    </tbody>
+                </table>
+            </div>
 
-            <table style="width: 100%; margin-top: 2rem;">
-                <tr>
-                    <th style="text-align: left;">Description</th>
-                    <th style="text-align: right;">Hours</th>
-                    <th style="text-align: right;">Rate</th>
-                    <th style="text-align: right;">Total</th>
-                </tr>
-                <tr>
-                    <td>${escapeHtml(job.description.substring(0, 40))}</td>
-                    <td style="text-align: right;">${job.hours.toFixed(2)}</td>
-                    <td style="text-align: right;">$${job.hourly_rate.toFixed(2)}</td>
-                    <td style="text-align: right;">$${job.total.toFixed(2)}</td>
-                </tr>
-                <tr style="border-top: 2px solid #00d4ff; font-weight: bold;">
-                    <td colspan="3" style="text-align: right;">Total:</td>
-                    <td style="text-align: right;" class="invoice-total">$${job.total.toFixed(2)}</td>
-                </tr>
-            </table>
+            <div class="invoice-totals">
+                <div class="invoice-totals-row">
+                    <span>Subtotal:</span>
+                    <span>$${job.total.toFixed(2)}</span>
+                </div>
+                <div class="invoice-totals-row">
+                    <span>Tax (0%):</span>
+                    <span>$0.00</span>
+                </div>
+                <div class="invoice-totals-row invoice-total-final">
+                    <span>Total Due:</span>
+                    <span>$${job.total.toFixed(2)}</span>
+                </div>
+            </div>
 
-            <p style="margin-top: 3rem; text-align: center; color: #888; font-size: 0.9rem;">
-                Thank you for your business! Big Pic Solutions - AI-Powered Technology Consulting
-            </p>
+            <div class="invoice-footer">
+                Thank you for your business!<br>
+                <span>${escapeHtml(settings.company_name)} &bull; AI-Powered Technology Consulting</span>
+            </div>
         `;
 
         document.getElementById('invoice-content').innerHTML = content;
@@ -582,9 +700,13 @@ function downloadInvoicePDF() {
     const jobId = appState.currentInvoiceJob;
     if (!jobId) return;
 
+    // Find the job to get the invoice number
+    const job = appState.jobs.find(j => j.id === jobId);
+    const invoiceNumber = job && job.invoice_number ? `INV-${String(job.invoice_number).padStart(4, '0')}` : `JOB-${jobId}`;
+
     const link = document.createElement('a');
     link.href = `/api/jobs/${jobId}/pdf`;
-    link.download = `Invoice-JOB-${String(jobId).padStart(5, '0')}.pdf`;
+    link.download = `Invoice-${invoiceNumber}.pdf`;
     link.click();
 
     showNotification('PDF downloaded!', 'success');
