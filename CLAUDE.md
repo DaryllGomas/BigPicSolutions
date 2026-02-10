@@ -4,11 +4,29 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Big Pic Solutions** is a static marketing website for an AI-powered technology consulting business that helps reduce IT costs. The site emphasizes combining 25+ years of human expertise with AI capabilities to optimize technology spending.
+**Big Pic Solutions** is the primary website for an R&D-focused technology company. The site pivoted from its original IT cost-optimization focus to emphasize research & development capabilities.
 
 **Tech Stack**: Pure vanilla HTML5, CSS3, and JavaScript (no frameworks, no build process required).
 
 **Deployment**: GitHub Pages (custom domain: bigpicsolutions.com) with FormSubmit.co for serverless contact form handling.
+
+## Related Repositories
+
+This is the **main/active repository**. There is one companion repo:
+
+| Repo | Domain | Purpose |
+|------|--------|---------|
+| **BigPicSolutions** (this repo) | `bigpicsolutions.com` | Main site — R&D-focused landing page |
+| [bigpic-technology](https://github.com/DaryllGomas/bigpic-technology) | `technology.bigpicsolutions.com` | Technology/IT services subdomain site |
+
+When the main site pivoted to R&D, the original IT/technology service content was split out into the `bigpic-technology` repo to live on its own subdomain. That repo has its own GitHub Pages deployment and CNAME configuration.
+
+**Key files in this repo after the pivot:**
+- `index.html` — Main R&D landing page (bigpicsolutions.com)
+- `technology.html` — Technology services page
+- `RnD/` — Research & Development content
+
+**Note:** The Invoicing system lives in the `bigpic-technology` repo, not here. It was removed from this repo to avoid duplication and confusion.
 
 ## Key Architecture Decisions
 
@@ -116,10 +134,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Git & Deployment
 
-- **Repository**: Already set up at C:\Users\Iccanui\Documents\Projects\BigPicSolutions
+- **Repository**: `DaryllGomas/BigPicSolutions` — local path: `/home/bigpic/github/BigPicSolutions`
 - **Branch**: `main` (deploy directly from root)
 - **Deployment**: Push to GitHub, GitHub Pages serves automatically
 - **Custom domain**: CNAME file configured for bigpicsolutions.com
+- **Companion repo**: `DaryllGomas/bigpic-technology` — local path: `/home/bigpic/github/bigpic-technology` (deploys to technology.bigpicsolutions.com)
 
 ## Contact Form Configuration
 
