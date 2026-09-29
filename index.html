@@ -628,7 +628,7 @@
 
         .divisions-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 2rem;
             max-width: 1200px;
             margin: 0 auto;
@@ -994,6 +994,10 @@
                 overflow: hidden;
             }
         }
+            @media (max-width: 1100px) and (min-width: 769px) {
+            .divisions-grid { grid-template-columns: repeat(2, 1fr); }
+            .divisions-grid .division-card:last-child { grid-column: 1 / -1; }
+        }
     </style>
 </head>
 <body>
@@ -1027,6 +1031,7 @@
             <li><a href="https://bigpicsolutions.com" class="nav-active">Home</a></li>
             <li><a href="https://technology.bigpicsolutions.com">Technology</a></li>
             <li><a href="https://markets.bigpicsolutions.com">Markets</a></li>
+            <li><a href="https://bigpicsolutions.com/studios/">Studios</a></li>
             <li><a href="https://daryllgomas.com/" target="_blank">About Me</a></li>
         </ul>
     </nav>
@@ -1037,6 +1042,7 @@
             <li><a href="https://bigpicsolutions.com" class="mobile-nav-link nav-active">Home</a></li>
             <li><a href="https://technology.bigpicsolutions.com" class="mobile-nav-link">Technology</a></li>
             <li><a href="https://markets.bigpicsolutions.com" class="mobile-nav-link">Markets</a></li>
+            <li><a href="https://bigpicsolutions.com/studios/" class="mobile-nav-link">Studios</a></li>
             <li><a href="https://daryllgomas.com/" target="_blank" class="mobile-nav-link">About Me</a></li>
         </ul>
     </div>
@@ -1188,6 +1194,30 @@
                 </div>
                 <div class="division-link">
                     Explore Markets
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </div>
+            </a>
+
+            <a href="https://bigpicsolutions.com/studios/" class="division-card reveal">
+                <div class="division-icon">
+                    <svg viewBox="0 0 56 56">
+                        <rect x="8" y="18" width="40" height="22" rx="8"/>
+                        <line x1="18" y1="25" x2="18" y2="33"/>
+                        <line x1="14" y1="29" x2="22" y2="29"/>
+                        <circle cx="36" cy="27" r="1.6"/>
+                        <circle cx="40" cy="31" r="1.6"/>
+                    </svg>
+                </div>
+                <div class="division-label">Division 03</div>
+                <div class="division-title">Studios</div>
+                <div class="division-desc">
+                    Games, worlds and interactive experiences. Home of THE PATH, a first-person story game,
+                    and Paper Arena. We build our own worlds and show the work.
+                </div>
+                <div class="division-link">
+                    Explore Studios
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M5 12h14M12 5l7 7-7 7"/>
                     </svg>
