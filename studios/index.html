@@ -7,14 +7,14 @@
 <meta name="description" content="BigPic Studios is an independent studio in Portland, Oregon. We build games, worlds and interactive experiences, starting with THE PATH, and we show our work.">
 <meta property="og:title" content="BigPic Studios">
 <meta property="og:description" content="Games, worlds and interactive experiences. Play THE PATH, chapter one, free in your browser.">
-<meta property="og:image" content="https://bigpicsolutions.com/studios/assets/hero-poster.jpg">
+<meta property="og:image" content="https://bigpicsolutions.com/studios/assets/hero-studios.jpg">
 <meta property="og:url" content="https://bigpicsolutions.com/studios/">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' fill='none' stroke='%23f4a261' stroke-width='2'%3E%3Ccircle cx='16' cy='16' r='12'/%3E%3Ccircle cx='16' cy='16' r='4'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="assets/hero-poster.webp">
+<link rel="preload" as="image" href="assets/hero-studios.webp" fetchpriority="high">
 <style>
 :root{
   --void:#04060b; --deep:#0a0f1a; --night:#121a2e; --twilight:#1a2744;
@@ -62,14 +62,14 @@ nav.scrolled{background:rgba(4,6,11,.72);backdrop-filter:blur(14px);-webkit-back
 .menu-btn span{display:block;width:18px;height:1.5px;background:var(--light);margin:4px auto;transition:.3s}
 
 /* ---------- hero ---------- */
-.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:center;overflow:hidden;isolation:isolate}
+.hero{position:relative;min-height:clamp(640px,52vw,960px);display:flex;align-items:center;overflow:hidden;isolation:isolate}
 .hero-media{position:absolute;inset:0;z-index:-2}
-.hero-media video,.hero-media img{width:100%;height:100%;object-fit:cover;object-position:60% 50%}
+.hero-media img{width:100%;height:100%;object-fit:cover;object-position:58% 50%}
 .hero::before{content:"";position:absolute;inset:0;z-index:-1;
   background:
-    linear-gradient(90deg,rgba(4,6,11,.94) 0%,rgba(4,6,11,.78) 32%,rgba(4,6,11,.25) 62%,rgba(4,6,11,.35) 100%),
-    linear-gradient(180deg,rgba(4,6,11,.55) 0%,transparent 22%,transparent 62%,var(--void) 100%)}
-.hero-inner{width:100%;max-width:var(--max);margin:0 auto;padding:140px clamp(20px,4vw,48px) 120px;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:end}
+    linear-gradient(90deg,rgba(4,6,11,.72) 0%,rgba(4,6,11,.45) 30%,rgba(4,6,11,0) 55%),
+    linear-gradient(180deg,rgba(4,6,11,.5) 0%,transparent 18%,transparent 64%,rgba(4,6,11,.82) 90%,var(--void) 100%)}
+.hero-inner{width:100%;max-width:var(--max);margin:0 auto;padding:110px clamp(20px,4vw,48px) 150px;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:start}
 .eyebrow{font-family:var(--sans);font-size:12.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--dawn)}
 .hero .eyebrow{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:26px}
 .hero .eyebrow i{font-style:normal;opacity:.45}
@@ -88,7 +88,7 @@ nav.scrolled{background:rgba(4,6,11,.72);backdrop-filter:blur(14px);-webkit-back
 .btn-gold:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(244,162,97,.5),inset 0 1px 0 rgba(255,255,255,.5)}
 .btn-ghost{border:1px solid rgba(253,246,236,.28);color:var(--light);background:rgba(253,246,236,.04);backdrop-filter:blur(6px)}
 .btn-ghost:hover{border-color:var(--gold);color:var(--gold);transform:translateY(-2px)}
-.hero-side{align-self:center;text-align:right;font-family:var(--sans);font-size:12px;letter-spacing:.26em;text-transform:uppercase;color:rgba(253,246,236,.62);line-height:2.2}
+.hero-side{align-self:start;margin-top:34px;text-align:left;font-family:var(--sans);font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:rgba(253,246,236,.82);line-height:2.1;text-shadow:0 1px 12px rgba(0,0,0,.8)}
 .hero-side span{display:block}
 .hero-side span:last-child{color:var(--dawn)}
 .scroll-cue{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);width:24px;height:38px;border:1.5px solid rgba(253,246,236,.35);border-radius:14px}
@@ -104,6 +104,8 @@ section{padding:clamp(80px,10vw,130px) clamp(20px,4vw,48px) 0}
 .sec-title::after{content:"";flex:1;max-width:120px;height:1px;background:linear-gradient(90deg,var(--sunrise),transparent)}
 .sec-desc{color:var(--muted);font-size:15.5px;text-align:right}
 
+#games{position:relative;z-index:3;margin-top:calc(-1 * clamp(24px,8vw,120px));padding-top:0}
+@media (max-width:1100px){.hero-side{display:none}.hero-inner{padding-bottom:120px}}
 /* the path strip */
 .path-strip{display:flex;align-items:center;gap:0;margin:-14px 0 34px;font-family:var(--sans);font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);overflow-x:auto;scrollbar-width:none}
 .path-strip::-webkit-scrollbar{display:none}
@@ -237,7 +239,10 @@ footer::before{content:"";position:absolute;left:50%;bottom:-340px;width:1400px;
   .menu-btn{display:block;position:relative;z-index:60}
   .hero-inner{grid-template-columns:1fr;padding-top:120px}
   .hero-side{display:none}
-  .hero::before{background:linear-gradient(180deg,rgba(4,6,11,.55) 0%,rgba(4,6,11,.72) 45%,rgba(4,6,11,.92) 80%,var(--void) 100%)}
+  .hero{min-height:100svh}
+  #games{margin-top:-24px}
+  .hero-media img{object-position:66% 50%}
+  .hero::before{background:linear-gradient(180deg,rgba(4,6,11,.5) 0%,rgba(4,6,11,.35) 40%,rgba(4,6,11,.85) 78%,var(--void) 100%)}
   .sec-head{grid-template-columns:1fr}
   .sec-desc{text-align:left}
   .g2,.g3,.doors{grid-template-columns:1fr}
@@ -279,9 +284,7 @@ footer::before{content:"";position:absolute;left:50%;bottom:-340px;width:1400px;
   <!-- HERO -->
   <header class="hero">
     <div class="hero-media">
-      <video id="heroVideo" muted loop playsinline preload="none" poster="assets/hero-poster.webp" aria-hidden="true">
-        <source src="assets/hero-ride.mp4" type="video/mp4">
-      </video>
+      <img src="assets/hero-studios.webp" alt="" width="1920" height="1080" fetchpriority="high">
     </div>
     <div class="hero-inner">
       <div>
@@ -298,7 +301,6 @@ footer::before{content:"";position:absolute;left:50%;bottom:-340px;width:1400px;
       </div>
       <div class="hero-side reveal d4" aria-hidden="true"><span>Stories</span><span>Games</span><span>Worlds</span><span>A more curious tomorrow</span></div>
     </div>
-    <a href="#games" class="scroll-cue" aria-label="Scroll to our work"></a>
   </header>
 
   <!-- GAMES -->
@@ -406,7 +408,7 @@ footer::before{content:"";position:absolute;left:50%;bottom:-340px;width:1400px;
       </div>
       <div class="log" style="margin-top:40px">
         <article class="entry reveal">
-          <div class="thumb"><img src="assets/hero-poster.webp" alt="" loading="lazy" width="1920" height="1080"></div>
+          <div class="thumb"><img src="assets/hero-studios.webp" alt="" loading="lazy" width="1920" height="1080"></div>
           <time datetime="2026-09-28">Sep 28, 2026</time>
           <h4>BigPic Studios opens</h4>
           <p>This page goes up: every game and world in one place, with the work shown.</p>
@@ -522,9 +524,6 @@ footer::before{content:"";position:absolute;left:50%;bottom:-340px;width:1400px;
   menuBtn.addEventListener('click', () => { const o = links.classList.toggle('open'); menuBtn.setAttribute('aria-expanded', o); });
   links.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { links.classList.remove('open'); menuBtn.setAttribute('aria-expanded', false); }));
 
-  // hero video: only when motion is welcome
-  const hv = document.getElementById('heroVideo');
-  if (!reduce && hv) { hv.preload = 'auto'; hv.load(); hv.play().catch(() => {}); }
 
   // reveal
   const els = document.querySelectorAll('.reveal');
@@ -542,8 +541,8 @@ footer::before{content:"";position:absolute;left:50%;bottom:-340px;width:1400px;
 
   // trailer modal
   const modal = document.getElementById('modal'), tv = document.getElementById('trailerVideo');
-  const open = () => { if (!tv.src) tv.src = 'https://thepath.daryllgomas.com/assets/trailer.mp4'; modal.classList.add('open'); tv.play().catch(() => {}); if (hv) hv.pause(); };
-  const close = () => { modal.classList.remove('open'); tv.pause(); if (hv && !reduce) hv.play().catch(() => {}); };
+  const open = () => { if (!tv.src) tv.src = 'https://thepath.daryllgomas.com/assets/trailer.mp4'; modal.classList.add('open'); tv.play().catch(() => {}); };
+  const close = () => { modal.classList.remove('open'); tv.pause(); };
   document.getElementById('playTrailer').addEventListener('click', open);
   document.getElementById('closeModal').addEventListener('click', close);
   modal.addEventListener('click', e => { if (e.target === modal) close(); });
