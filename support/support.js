@@ -117,7 +117,7 @@
     const xb = $('#sX'), xs = $('#sXSub');
     if (typeof pay.x === 'string' && /^https:\/\/(x\.com|money\.x\.com)\/[A-Za-z0-9_\/-]+$/.test(pay.x)) {
       xb.href = pay.x; xb.target = '_blank'; xb.rel = 'noopener'; xb.classList.remove('off'); xb.removeAttribute('aria-disabled');
-      xs.textContent = 'Opens X Money. You choose the amount.';
+      xs.textContent = 'Opens my X profile (@OneSpicyMeatBol). Send a tip with X Money from there.';
     } else { xb.removeAttribute('href'); xb.classList.add('off'); xb.setAttribute('aria-disabled', 'true'); xs.textContent = 'X Money tips are coming soon.'; }
     dlg.querySelectorAll('.coin').forEach((c) => {
       const key = c.dataset.coin, spec = COINS[key], a = typeof pay[key] === 'string' ? pay[key].trim() : '';
