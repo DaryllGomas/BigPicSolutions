@@ -1,5 +1,5 @@
 {
-  "_how": "Shared by every BigPic site (bigpicsolutions.com/support/support.js): edit here, push this repo, and every site picks it up. 'pay' holds the payment addresses. pay.card = the Ko-fi page, https://ko-fi.com/daryllbuilds: tips by card or PayPal go through Ko-fi to PayPal, kept off the Stripe account that clients pay. The widget only accepts a https://ko-fi.com/<name> link there; anything else leaves the card button on 'coming soon'. Crypto fields are checked per coin and stay 'coming soon' if empty or malformed (near is empty for now). The totals and goals are LIVE from the invoicing app's income ledger, published daily through https://pulse.bigpicsolutions.com/v1/support; the numbers here are only the dated fallback if Pulse can't be reached.",
+  "_how": "Shared by every BigPic site (bigpicsolutions.com/support/support.js): edit here, push this repo, and every site picks it up. 'pay' holds the payment addresses. pay.card = the Ko-fi page (https://ko-fi.com/daryllbuilds; blank = 'coming soon' until PayPal can receive): tips by card or PayPal go through Ko-fi to PayPal, kept off the Stripe account that clients pay. The widget only accepts a https://ko-fi.com/<name> link there; anything else leaves the card button on 'coming soon'. pay.x = the X Money tip link (https://x.com/... or https://money.x.com/...); blank = 'coming soon'. Crypto fields are checked per coin and stay 'coming soon' if empty or malformed (near is empty for now). The totals and goals are LIVE from the invoicing app's income ledger, published daily through https://pulse.bigpicsolutions.com/v1/support; the numbers here are only the dated fallback if Pulse can't be reached.",
   "updated": "2026-10-02",
   "month": "2026-10",
   "month_number": 1,
@@ -9,7 +9,8 @@
   "received_month": 0,
   "received_week": 0,
   "pay": {
-    "card": "https://ko-fi.com/daryllbuilds",
+    "card": "",
+    "x": "",
     "btc": "bc1q6g9r3am4fcxh9nccduewfnx0r9cvsf7d2se2zn",
     "sol": "5pdPcZHmEExDW1zyDsiGGNMDjbwzj5rVbT2ypiJun5FJ",
     "usdc_sol": "5pdPcZHmEExDW1zyDsiGGNMDjbwzj5rVbT2ypiJun5FJ",
