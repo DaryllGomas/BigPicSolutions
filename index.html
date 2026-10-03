@@ -1273,8 +1273,11 @@
             </p>
 
             <form class="contact-form" action="https://formsubmit.co/daryll.gomas@gmail.com" method="POST">
-                <input type="hidden" name="_subject" value="New inquiry from Big Pic Solutions R&D">
-                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_subject" value="[BigPic Solutions] New inquiry">
+                <input type="hidden" name="_captcha" value="true">
+                <input type="hidden" name="_template" value="table">
+                <!-- Honeypot: invisible to humans; submissions that fill it are discarded -->
+                <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true">
                 <input type="hidden" name="_next" value="https://bigpicsolutions.com/thanks.html">
 
                 <input type="text" name="name" class="form-input" placeholder="Your Name" required>
