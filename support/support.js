@@ -53,6 +53,10 @@
         <a class="btn off" id="sCard" aria-disabled="true">TIP BY CARD OR PAYPAL</a>
         <span class="sub" id="sCardSub">Card tips are coming soon.</span>
       </div>
+      <div class="card-row">
+        <a class="btn off" id="sX" aria-disabled="true">TIP WITH X MONEY</a>
+        <span class="sub" id="sXSub">X Money tips are coming soon.</span>
+      </div>
       <p class="crypto-h">Or tip in crypto</p>
       <div class="coins">
         <details class="coin" data-coin="btc"><summary><span class="c-name">Bitcoin</span><span class="c-net">BTC &middot; Bitcoin network</span><span class="c-go">Coming soon</span></summary><div class="c-body"></div></details>
@@ -110,6 +114,11 @@
       card.href = pay.card; card.target = '_blank'; card.rel = 'noopener'; card.classList.remove('off'); card.removeAttribute('aria-disabled');
       sub.textContent = 'Opens my Ko-fi page (card or PayPal). You choose the amount, from $5.';
     } else { card.removeAttribute('href'); card.classList.add('off'); card.setAttribute('aria-disabled', 'true'); sub.textContent = 'Card tips are coming soon.'; }
+    const xb = $('#sX'), xs = $('#sXSub');
+    if (typeof pay.x === 'string' && /^https:\/\/(x\.com|money\.x\.com)\/[A-Za-z0-9_\/-]+$/.test(pay.x)) {
+      xb.href = pay.x; xb.target = '_blank'; xb.rel = 'noopener'; xb.classList.remove('off'); xb.removeAttribute('aria-disabled');
+      xs.textContent = 'Opens X Money. You choose the amount.';
+    } else { xb.removeAttribute('href'); xb.classList.add('off'); xb.setAttribute('aria-disabled', 'true'); xs.textContent = 'X Money tips are coming soon.'; }
     dlg.querySelectorAll('.coin').forEach((c) => {
       const key = c.dataset.coin, spec = COINS[key], a = typeof pay[key] === 'string' ? pay[key].trim() : '';
       const live = !!a && spec.ok(a);
